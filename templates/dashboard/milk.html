@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}
+Sut mahsulotlari
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">Sut mahsulotlari narxlari (oylar bo‘yicha)</h2>
+
+<canvas id="milkChart"></canvas>
+
+{{ months|json_script:"months-data" }}
+{{ milk|json_script:"milk-data" }}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/milk.js' %}"></script>
+{% endblock %}

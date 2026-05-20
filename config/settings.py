@@ -9,8 +9,18 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
 from pathlib import Path
+import environ
+import dj_database_url
+import os
+from decouple import config
+from django.contrib import messages
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +30,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h_hqo@1i!@-l_zzvlt@0l7e30_5hinbl(!z7222l)lv3(y#&+_'
+SECRET_KEY = env('SECRET_KEY', default='change-me-in-production')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost', '.vercel.app'])
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['https://*.vercel.app'])
+
 
 
 # Application definition
@@ -38,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +68,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,11 +87,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.parse(
+        config("DATABASE_URL")
+    )
 }
+
 
 
 # Password validation
@@ -123,13 +136,10 @@ else:
     MEDIA_ROOT = BASE_DIR / "media"
 
 MEDIA_URL = "/media/"
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = []
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
 WHITENOISE_USE_FINDERS = True
 
-
-AUTH_USER_MODEL = 'user.User'
 
 INTERNAL_IPS = [
     '127.0.0.1',
