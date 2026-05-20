@@ -130,13 +130,11 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-if os.environ.get("VERCEL"):
-    MEDIA_ROOT = "/tmp/media"
-else:
-    MEDIA_ROOT = BASE_DIR / "media"
 
 MEDIA_URL = "/media/"
+
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [BASE_DIR / "static"]
 WHITENOISE_USE_FINDERS = True
 
